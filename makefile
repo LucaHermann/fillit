@@ -10,54 +10,26 @@
 #*                                                                            *#
 #* ************************************************************************** *#
 
-NAME = fillit
+NAME	= fillit
 
-SRC_PATH = ./srcs/
+SRC		=	main.c arrange.c checker.c map.c read.c solve.c forme.c
 
-SRC_NAME = 	main.c\
-			arrange.c \
-			checker.c \
-			map.c \
-			read.c \
-			solve.c \
-			forme.c
+OBJ		= $(addprefix srcs/,$(SRC:.c=.o))
 
-OBJ_PATH = ./obj/
+CFLAGS	=  -Werror -Wextra -Wall -Iincludes/ -Ilibft/includes/
 
-OBJ_NAME = $(SRC_NAME:.c=.o)
-
-INC_PATH = ./includes/
-
-LIB = ./libft/libft.a
-
-CC = gcc
-CFLAGS = -Werror -Wall -Wextra
-
-SRC = $(addprefix $(SRC_PATH),$(SRC_NAME))
-OBJ = $(addprefix $(OBJ_PATH),$(OBJ_NAME))
-INC = $(addprefix -I,$(INC_PATH))
+$(NAME): $(OBJ)
+	@make -C libft
+	 @gcc $(OBJ) -o $(NAME) -L libft/ -lft -Ilibft/includes/
 
 all: $(NAME)
 
-$(NAME): $(OBJ)
-	make -C libft/
-	$(CC) $(CFLAGS) $(INC) -o $(NAME) $(LIB) $(OBJ)
-
-$(OBJ_PATH)%.o: $(SRC_PATH)%.c
-	@mkdir $(OBJ_PATH) 2> /dev/null || echo "" > /dev/null
-	$(CC) $(CFLAGS) $(INC) -o $@ -c $<
-
 clean:
-	rm -fv $(OBJ)
-	@rmdir $(OBJ_PATH) i2> /dev/null || echo "" > /dev/null
+	@make -C libft/ clean
+	@rm -rf $(OBJ)
 
 fclean: clean
-	rm -fv $(NAME) 
+	@rm -rf $(NAME) $(OBJ)
+	@make -C libft/ fclean
 
-re: fclean all
-
-norme:
-	norminette $(SRC)
-	norminette $(INC_PATH)fillit.h
-
-.PHONY: all clean fclean re norme
+re: fclean $(NAME)
